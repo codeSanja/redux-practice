@@ -1,33 +1,38 @@
-// import React from 'react';
-// import ReactDOM from 'react-dom';
-// import './index.css';
-// import App from './App';
-// import registerServiceWorker from './registerServiceWorker';
-//
-// ReactDOM.render(<App />, document.getElementById('root'));
-// registerServiceWorker();
-
-
 import React, { Component } from 'react';
-import  { createStore } from 'redux';
+import { combineReducers, createStore } from 'redux';
 
-const reducer = function (state, action) {
-    if(action.type === "INC"){
-        return state+action.payload.value;
-    }if(action.type === "DEC"){
-        return state-action.payload.value;
+const userReducer = (state = {}, action) => {
+  switch (action.type) {
+    case 'CHANGE_NAME': {
+      state = { ...state, name: action.payload.name };
+      break;
     }
+    case 'CHANGE_AGE': {
+      state = { ...state, age: action.payload.age };
+      break;
+    }
+  }
+  return state;
+};
 
-    return state;
-}
+const tweetsReducer = (state = [], action) => {
+  return state;
+};
 
-const store = createStore(reducer, 0);
+const reducers = combineReducers({
+  user: userReducer,
+  tweets: tweetsReducer,
+});
+
+const store = createStore(reducers);
 
 store.subscribe(() => {
-    console.log("store changed: ", store.getState())
-})
+  console.log('store changed: ', store.getState());
+});
 
-store.dispatch({type: "INC", payload: {value : 1}});
-store.dispatch({type: "DEC", payload: {value : 2}});
-store.dispatch({type: "INC", payload: {value : 3}});
-store.dispatch({type: "DEC", payload: {value : 4}});
+store.dispatch({ type: 'CHANGE_NAME', payload: { name: 'Will' } });
+store.dispatch({ type: 'CHANGE_AGE', payload: { age: 35 } });
+store.dispatch({ type: 'CHANGE_AGE', payload: { age: 36 } });
+store.dispatch({ type: 'CHANGE_NAME', payload: { name: 'Fred' } });
+
+//NEXT: https://www.youtube.com/watch?v=DJ8fR0mZM44
