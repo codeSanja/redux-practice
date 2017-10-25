@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { combineReducers, createStore } from 'redux';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
 
 const userReducer = (state = {}, action) => {
   switch (action.type) {
@@ -24,7 +24,14 @@ const reducers = combineReducers({
   tweets: tweetsReducer,
 });
 
-const store = createStore(reducers);
+const logger = store => next => action => {
+  console.log('action fired', action);
+  action.type = 'NO_CHANGE';
+  next(action);
+};
+
+const middleware = applyMiddleware(logger);
+const store = createStore(reducers, middleware);
 
 store.subscribe(() => {
   console.log('store changed: ', store.getState());
