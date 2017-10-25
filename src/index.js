@@ -13,28 +13,26 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'FETCH_USERS_START': {
-      console.log('Working...');
+    case 'FETCH_USERS_PENDING': {
       return { ...state, fetching: true };
       break;
     }
-    case 'FETCH_USERS_RECEIVED': {
-      console.log(action.payload[5]);
-      console.log(action.payload[6]);
+    case 'FETCH_USERS_FULFILLED': {
       return {
         ...state,
         fetching: false,
         fetched: true,
-        users: [action.payload[5], action.payload[6]],
+        users: [action.payload.data[5], action.payload.data[6]],
       };
       break;
     }
-    case 'FETCH_USERS_ERROR': {
+    case 'FETCH_USERS_REJECTED': {
       return {
         ...state,
         fetching: false,
         fetched: false,
-        error: action.payload,
+        error: action.error,
+        errorPayload: action.payload,
       };
       break;
     }
@@ -49,6 +47,6 @@ const middleware = applyMiddleware(promise(), thunk, logger);
 const store = createStore(reducer, middleware);
 
 store.dispatch({
-  type: 'FOO',
-  payload: axios.get('http://rest.learncode.academy/api/wstern/users')
+  type: 'FETCH_USERS',
+  payload: axios.get('http://rest.learncode..academy/api/wstern/users'),
 });
