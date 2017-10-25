@@ -1,41 +1,40 @@
-import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
+import axios from 'axios';
 import logger from 'redux-logger';
+import thunk from 'redux-thunk';
 
-const userReducer = (state = {}, action) => {
+const reducer = (state = {}, action) => {
   switch (action.type) {
-    case 'CHANGE_NAME': {
-      state = { ...state, name: action.payload.name };
+    case 'FETCH_USERS_START': {
+      console.log('Working...');
       break;
     }
-    case 'CHANGE_AGE': {
-      state = { ...state, age: action.payload.age };
+    case 'FETCH_USERS_RECEIVED': {
+        console.log(action.payload[5]);
+        console.log(action.payload[6]);
       break;
     }
-    default: {
+    case 'FETCH_USERS_ERROR': {
+        console.log(action.payload);
+      break;
     }
   }
+
   return state;
 };
 
-const tweetsReducer = (state = [], action) => {
-  return state;
-};
+const middleware = applyMiddleware(thunk, logger);
+const store = createStore(reducer, middleware);
 
-const reducers = combineReducers({
-  user: userReducer,
-  tweets: tweetsReducer,
+store.dispatch(dispatch => {
+  dispatch({ type: 'FETCH_USERS_START' });
+
+  axios
+    .get('http://rest.learncode.academy/api/wstern/users')
+    .then(response => {
+      dispatch({ type: 'FETCH_USERS_RECEIVED', payload: response.data });
+    })
+    .catch(err => {
+      dispatch({ type: 'FETCH_USERS_ERROR', payload: err });
+    });
 });
-
-const middleware = applyMiddleware(logger);
-const store = createStore(reducers, middleware);
-
-store.dispatch({ type: 'FOO' });
-
-//user actions
-store.dispatch({ type: 'CHANGE_NAME', payload: { name: 'Will' } });
-store.dispatch({ type: 'CHANGE_AGE', payload: { age: 35 } });
-store.dispatch({ type: 'CHANGE_AGE', payload: { age: 36 } });
-store.dispatch({ type: 'CHANGE_NAME', payload: { name: 'Fred' } });
-//END OF user actions
-
-//NEXT: https://www.youtube.com/watch?v=DJ8fR0mZM44
