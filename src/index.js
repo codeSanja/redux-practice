@@ -2,6 +2,7 @@ import { applyMiddleware, createStore } from 'redux';
 import axios from 'axios';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
+import promise from 'redux-promise-middleware';
 
 const initialState = {
   fetching: false,
@@ -44,18 +45,10 @@ const reducer = (state = initialState, action) => {
   return state;
 };
 
-const middleware = applyMiddleware(thunk, logger);
+const middleware = applyMiddleware(promise(), thunk, logger);
 const store = createStore(reducer, middleware);
 
-store.dispatch(dispatch => {
-  dispatch({ type: 'FETCH_USERS_START' });
-
-  axios
-    .get('http://rest.learncode.academy/api/wstern/users')
-    .then(response => {
-      dispatch({ type: 'FETCH_USERS_RECEIVED', payload: response.data });
-    })
-    .catch(err => {
-      dispatch({ type: 'FETCH_USERS_ERROR', payload: err });
-    });
+store.dispatch({
+  type: 'FOO',
+  payload: axios.get('http://rest.learncode.academy/api/wstern/users')
 });
