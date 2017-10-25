@@ -48,5 +48,5 @@ const store = createStore(reducer, middleware);
 
 store.dispatch({
   type: 'FETCH_USERS',
-  payload: axios.get('http://rest.learncode..academy/api/wstern/users'),
+  payload: axios.get('http://rest.learncode.academy/api/wstern/users'),
 });
