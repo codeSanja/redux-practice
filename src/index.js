@@ -11,6 +11,10 @@ const userReducer = (state = {}, action) => {
       state = { ...state, age: action.payload.age };
       break;
     }
+    case 'ERR_THROW': {
+      throw new Error("Aaaa!");
+      break;
+    }
   }
   return state;
 };
@@ -26,11 +30,18 @@ const reducers = combineReducers({
 
 const logger = store => next => action => {
   console.log('action fired', action);
-  action.type = 'NO_CHANGE';
   next(action);
 };
 
-const middleware = applyMiddleware(logger);
+const error = store => next => action => {
+  try{
+      next(action);
+  }catch (e){
+    console.log("AHHHHH!!", e)
+  }
+};
+
+const middleware = applyMiddleware(logger, error);
 const store = createStore(reducers, middleware);
 
 store.subscribe(() => {
@@ -41,5 +52,6 @@ store.dispatch({ type: 'CHANGE_NAME', payload: { name: 'Will' } });
 store.dispatch({ type: 'CHANGE_AGE', payload: { age: 35 } });
 store.dispatch({ type: 'CHANGE_AGE', payload: { age: 36 } });
 store.dispatch({ type: 'CHANGE_NAME', payload: { name: 'Fred' } });
+store.dispatch({ type: 'ERR_THROW', payload: { name: 'FredE' } });
 
 //NEXT: https://www.youtube.com/watch?v=DJ8fR0mZM44
