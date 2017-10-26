@@ -27,7 +27,7 @@ class Layout extends React.Component {
     });
     return (
       <div>
-        {this.props.user.name}
+        <div>{user.name}</div>
         <ul>{mappedTweets}</ul>
       </div>
     );
