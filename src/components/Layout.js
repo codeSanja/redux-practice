@@ -22,8 +22,8 @@ class Layout extends React.Component {
       );
     }
 
-    const mappedTweets = tweets.map(tweet => {
-      return <li>{tweet.text}</li>;
+    const mappedTweets = tweets.map((tweet, index) => {
+      return <li key={index}>{tweet.text}</li>;
     });
     return (
       <div>
